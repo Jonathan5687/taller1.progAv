@@ -22,7 +22,7 @@ public class Pedido {
             total *= 0.90;  //10% de descuento a personas de la tercera edad
         }
         if (usuario.isEsIndigena()){
-            total += 0.92; //8% de descuento adicional para indigenas
+            total *= 0.92; //8% de descuento adicional para indigenas
         }
         return total; 
     }
