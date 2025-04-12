@@ -1,20 +1,8 @@
 package edu.progAvUD.taller1.modelo;
 
-public class ProductoIndividual extends Producto{
-    private int puntos;
-    
-    public ProductoIndividual (String nombre, double precio, String descripcion, int puntos){
-        super(nombre, precio, descripcion);
-        this.puntos = puntos; 
-        
-    }
+public class ProductoIndividual extends Producto {
 
-    @Override
-    public double calcularPrecioFinal() {
-        return getPrecio();
+    public ProductoIndividual(String nombre, String categoria, double precio) {
+        super(nombre, categoria, precio);
     }
-    public int getPuntos(){
-        return puntos; 
-    }
-    
 }
