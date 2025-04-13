@@ -1,6 +1,5 @@
 package edu.progAvUD.taller1.modelo;
 
-
 public class PagoTarjeta extends Pago{
     private Datafono datafono;
     

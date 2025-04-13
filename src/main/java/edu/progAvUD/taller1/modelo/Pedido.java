@@ -27,12 +27,11 @@ public class Pedido {
         return total; 
     }
     
-    public Factura generarFactura(){
-        double total = calcularTotal(); 
-        return new Factura("Detalle del pedido: ", total);
+    public void limpiarPedido() {
+        productos.clear();
     }
-    
-    public void setMetodoPago(Pago metodoPago){
-        this.metodoPago = metodoPago; 
+
+    public List<Producto> getProductos() {
+        return productos;
     }
 }

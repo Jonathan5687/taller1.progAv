@@ -28,4 +28,3 @@ public class Producto {
         return precio;
     }
 }
-

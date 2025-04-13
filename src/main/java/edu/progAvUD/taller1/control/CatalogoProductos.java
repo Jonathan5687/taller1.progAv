@@ -7,10 +7,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CatalogoProductos {
-    private List<Producto> productos;
+    private List<Producto> productos = new ArrayList<>();
 
     public CatalogoProductos() {
-        productos = new ArrayList<>();
 
         // Buckets
         productos.add(new Producto("Bucket Clásico", "Buckets", 35000));
@@ -19,10 +18,15 @@ public class CatalogoProductos {
         // Wraps
         productos.add(new Producto("Wrap de Pollo BBQ", "Wraps", 18000));
         productos.add(new Producto("Wrap Picante", "Wraps", 19000));
+        
+        //papas
+        productos.add(new Producto("papas pequeñas", "papas", 5000));
+        productos.add(new Producto("papas medianas", "papas", 6500));
+        productos.add(new Producto("papas grandes", "papas", 8000));
 
         // Alitas
-        productos.add(new Producto("5 Alitas BBQ", "Alitas", 16000));
-        productos.add(new Producto("10 Alitas Picantes", "Alitas", 30000));
+        productos.add(new Producto("10 Alitas BBQ", "Alitas", 16000));
+        productos.add(new Producto("10 Alitas Picantes", "Alitas", 20000));
 
         // Nuggets
         productos.add(new Producto("5 Nuggets", "Nuggets", 8000));
@@ -42,5 +46,9 @@ public class CatalogoProductos {
         return productos.stream()
                 .filter(p -> p.getCategoria().equalsIgnoreCase(categoria))
                 .collect(Collectors.toList());
+    }
+    
+    public List <Producto> obtenerTodosLosProductos(){
+        return productos;
     }
 }

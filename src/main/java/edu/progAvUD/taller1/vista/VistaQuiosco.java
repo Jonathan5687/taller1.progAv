@@ -1,6 +1,6 @@
 package edu.progAvUD.taller1.vista;
 
-import edu.progAvUD.taller1.control.Controlador;
+import edu.progAvUD.taller1.modelo.Factura;
 import edu.progAvUD.taller1.modelo.Producto;
 
 import javax.swing.*;
@@ -9,100 +9,142 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 public class VistaQuiosco extends JFrame {
-    private CardLayout cardLayout;
     private JPanel mainPanel;
-
-    private JPanel pantallaInicio;
+    private CardLayout cardLayout;
+    
+    private JPanel panelInicio;
     private JPanel panelTipoPedido;
     private JPanel panelCategorias;
     private JPanel panelCatalogoProductos;
+    private JPanel panelUsuario;
+    private JPanel panelPago;
 
-    private JButton btnIniciarPedido;
-    private JButton btnCancelarPedido;
-
-    private JButton btnParaMesa;
-    private JButton btnParaLlevar;
-
-    private JButton[] botonesCategorias;
+    public JTextField txtCedula, txtNombre, txtEdad;
+    public JCheckBox chkIndigena;
+    public JButton btnConfirmarUsuario, btnPagarCaja, btnPagarTarjeta;
 
     public VistaQuiosco() {
-        setTitle("Kiosco de autoatención");
+        setTitle("Quiosco de Autoservicio");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
+        inicializarPantallas();
+        getContentPane().add(mainPanel);
+
+        setVisible(true);
+    }
+
+    private void inicializarPantallas() {
         inicializarPantallaInicio();
         inicializarPanelTipoPedido();
         inicializarPanelCategorias();
-        inicializarPanelCatalogoProductos();
-
-        add(mainPanel);
-        setLocationRelativeTo(null); // Centrar ventana
+        inicializarPanelCatalogo();
+        inicializarPanelUsuario();
+        inicializarPanelPago();
     }
 
     private void inicializarPantallaInicio() {
-        pantallaInicio = new JPanel(new FlowLayout());
-        btnIniciarPedido = new JButton("Iniciar Pedido");
-        btnCancelarPedido = new JButton("Cancelar Pedido");
-        pantallaInicio.add(btnIniciarPedido);
-        pantallaInicio.add(btnCancelarPedido);
-        mainPanel.add(pantallaInicio, "INICIO");
+        panelInicio = new JPanel(new BorderLayout());
+        JButton btnIniciar = new JButton("Iniciar Pedido");
+        btnIniciar.setActionCommand("INICIAR_PEDIDO");
+        panelInicio.add(btnIniciar, BorderLayout.CENTER);
+        mainPanel.add(panelInicio, "INICIO");
     }
 
     private void inicializarPanelTipoPedido() {
-        panelTipoPedido = new JPanel(new GridLayout(2, 1, 10, 10));
-        btnParaMesa = new JButton("Para Mesa");
-        btnParaLlevar = new JButton("Para Llevar");
-        panelTipoPedido.add(btnParaMesa);
-        panelTipoPedido.add(btnParaLlevar);
+        panelTipoPedido = new JPanel();
+        JButton btnMesa = new JButton("Para Mesa");
+        JButton btnLlevar = new JButton("Para Llevar");
+        JButton btnCancelar = new JButton("Cancelar");
+
+        btnMesa.setActionCommand("PARA_MESA");
+        btnLlevar.setActionCommand("PARA_LLEVAR");
+        btnCancelar.setActionCommand("CANCELAR_PEDIDO");
+
+        panelTipoPedido.add(btnMesa);
+        panelTipoPedido.add(btnLlevar);
+        panelTipoPedido.add(btnCancelar);
         mainPanel.add(panelTipoPedido, "TIPO_PEDIDO");
     }
 
     private void inicializarPanelCategorias() {
-        String[] categorias = {
-            "Buckets", "Wraps", "Alitas",
-            "Nuggets", "Hamburguesas", "Combos"
-        };
-
-        panelCategorias = new JPanel(new GridLayout(0, 2, 10, 10));
-        botonesCategorias = new JButton[categorias.length];
-
-        for (int i = 0; i < categorias.length; i++) {
-            botonesCategorias[i] = new JButton(categorias[i]);
-            panelCategorias.add(botonesCategorias[i]);
+        panelCategorias = new JPanel();
+        String[] categorias = {"Combos", "Alitas", "Nuggets", "Papas", "Wraps", "Hamburguesas"};
+        for (String cat : categorias) {
+            JButton btnCategoria = new JButton(cat);
+            btnCategoria.setActionCommand("CATEGORIA_" + cat.toUpperCase().replace(" ", "_"));
+            panelCategorias.add(btnCategoria);
         }
-
         mainPanel.add(panelCategorias, "CATEGORIAS");
     }
 
-    private void inicializarPanelCatalogoProductos() {
+    private void inicializarPanelCatalogo() {
         panelCatalogoProductos = new JPanel(new GridLayout(0, 3, 10, 10));
-        JScrollPane scrollPane = new JScrollPane(panelCatalogoProductos);
-        mainPanel.add(scrollPane, "CATALOGO_PRODUCTOS");
+        mainPanel.add(new JScrollPane(panelCatalogoProductos), "CATALOGO_PRODUCTOS");
     }
 
-    public void setControlador(Controlador controlador) {
-        btnIniciarPedido.addActionListener(controlador);
-        btnIniciarPedido.setActionCommand("INICIAR_PEDIDO");
-
-        btnCancelarPedido.addActionListener(controlador);
-        btnCancelarPedido.setActionCommand("CANCELAR_PEDIDO");
-
-        btnParaMesa.addActionListener(controlador);
-        btnParaMesa.setActionCommand("PARA_MESA");
-
-        btnParaLlevar.addActionListener(controlador);
-        btnParaLlevar.setActionCommand("PARA_LLEVAR");
-
-        for (JButton botonCategoria : botonesCategorias) {
-            botonCategoria.addActionListener(controlador);
-            botonCategoria.setActionCommand("CATEGORIA_" + botonCategoria.getText().toUpperCase().replace(" ", "_"));
+    public void mostrarPantallaCatalogoProductos(String categoria, List<Producto> productos, ActionListener listener) {
+        panelCatalogoProductos.removeAll();
+        for (Producto producto : productos) {
+            JButton botonProducto = new JButton("<html><center>" + producto.getNombre() + "<br>$" + producto.getPrecio() + "</center></html>");
+            botonProducto.setActionCommand("PRODUCTO_" + producto.getNombre().toUpperCase().replace(" ", "_"));
+            botonProducto.addActionListener(listener);
+            panelCatalogoProductos.add(botonProducto);
         }
+        panelCatalogoProductos.revalidate();
+        panelCatalogoProductos.repaint();
+        cardLayout.show(mainPanel, "CATALOGO_PRODUCTOS");
     }
 
-    // Métodos para cambiar de pantalla
+    private void inicializarPanelUsuario() {
+        panelUsuario = new JPanel(new GridLayout(5, 2));
+        txtNombre = new JTextField();
+        txtCedula = new JTextField();
+        txtEdad = new JTextField();
+        chkIndigena = new JCheckBox("¿Es indígena?");
+
+        btnConfirmarUsuario = new JButton("Confirmar Datos");
+        btnConfirmarUsuario.setActionCommand("CONFIRMAR_USUARIO");
+
+        panelUsuario.add(new JLabel("Nombre:"));
+        panelUsuario.add(txtNombre);
+        panelUsuario.add(new JLabel("Cédula:"));
+        panelUsuario.add(txtCedula);
+        panelUsuario.add(new JLabel("Edad:"));
+        panelUsuario.add(txtEdad);
+        panelUsuario.add(chkIndigena);
+        panelUsuario.add(new JLabel(""));
+        panelUsuario.add(btnConfirmarUsuario);
+
+        mainPanel.add(panelUsuario, "USUARIO");
+    }
+
+    private void inicializarPanelPago() {
+        panelPago = new JPanel();
+        btnPagarCaja = new JButton("Pagar en Caja");
+        btnPagarTarjeta = new JButton("Pagar con Tarjeta");
+
+        btnPagarCaja.setActionCommand("PAGAR_CAJA");
+        btnPagarTarjeta.setActionCommand("PAGAR_TARJETA");
+
+        panelPago.add(btnPagarCaja);
+        panelPago.add(btnPagarTarjeta);
+
+        mainPanel.add(panelPago, "PAGO");
+    }
+
+    public void setControlador(ActionListener controlador) {
+        for (Component c : panelInicio.getComponents()) if (c instanceof JButton) ((JButton) c).addActionListener(controlador);
+        for (Component c : panelTipoPedido.getComponents()) if (c instanceof JButton) ((JButton) c).addActionListener(controlador);
+        for (Component c : panelCategorias.getComponents()) if (c instanceof JButton) ((JButton) c).addActionListener(controlador);
+        btnConfirmarUsuario.addActionListener(controlador);
+        btnPagarCaja.addActionListener(controlador);
+        btnPagarTarjeta.addActionListener(controlador);
+    }
+
     public void mostrarPantallaInicio() {
         cardLayout.show(mainPanel, "INICIO");
     }
@@ -115,39 +157,18 @@ public class VistaQuiosco extends JFrame {
         cardLayout.show(mainPanel, "CATEGORIAS");
     }
 
-    public void mostrarPantallaCatalogoProductos(String categoria, List<Producto> productos, ActionListener listener) {
-        panelCatalogoProductos.removeAll();
-
-        for (Producto producto : productos) {
-            JButton botonProducto = new JButton("<html><center>" + producto.getNombre() + "<br>$" + producto.getPrecio() + "</center></html>");
-            botonProducto.setActionCommand("PRODUCTO_" + producto.getNombre().toUpperCase().replace(" ", "_"));
-            botonProducto.addActionListener(listener);
-            panelCatalogoProductos.add(botonProducto);
-        }
-
-        panelCatalogoProductos.revalidate();
-        panelCatalogoProductos.repaint();
-        cardLayout.show(mainPanel, "CATALOGO_PRODUCTOS");
+    public void mostrarPantallaUsuario(Producto productoSeleccionado) {
+        cardLayout.show(mainPanel, "USUARIO");
     }
 
-    // Getters (si los necesitas)
-    public JButton getBtnParaMesa() {
-        return btnParaMesa;
+    public void mostrarPantallaPago() {
+        cardLayout.show(mainPanel, "PAGO");
     }
 
-    public JButton getBtnParaLlevar() {
-        return btnParaLlevar;
-    }
-
-    public JButton[] getBotonesCategorias() {
-        return botonesCategorias;
-    }
-
-    public JButton getBtnIniciarPedido() {
-        return btnIniciarPedido;
-    }
-
-    public JButton getBtnCancelarPedido() {
-        return btnCancelarPedido;
+    public void mostrarFactura(Factura factura) {
+        JTextArea areaFactura = new JTextArea(factura.generarTextoFactura());
+        areaFactura.setEditable(false);
+        JOptionPane.showMessageDialog(null, new JScrollPane(areaFactura), "Factura", JOptionPane.INFORMATION_MESSAGE);
+        mostrarPantallaInicio();
     }
 }
